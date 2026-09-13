@@ -92,6 +92,14 @@ panier. Un reducer ne gère que la **source de vérité**, jamais ce qu'on
 peut recalculer à partir d'elle.
 {: .alert-warning}
 
+Deux autres fichiers du dossier `reducer/` sont déjà fournis et
+fonctionnels : `cartLines.ts` (fonctions `addLine`/`incrementLine`/
+`decrementLine`/`removeLine`, qui manipulent le tableau `lines`) et
+`cartDiscount.ts` (fonction `applyDiscountCode`, qui cherche un code
+promo). Ces algorithmes sont prêts pour que le TODO 2 se concentre sur le
+reducer lui-même - QUAND et COMMENT l'état change - pas sur la mécanique
+de recherche/tableau.
+
 ## ✅ Point de contrôle Partie 1
 
 Avant de coder, tu dois pouvoir expliquer à voix haute :
@@ -126,11 +134,35 @@ Tout est déjà fourni et câblé **sauf 3 fichiers** : `src/types.ts`,
 `src/reducer/cartReducer.ts` et `src/context/CartContext.tsx`. C'est là
 que tu vas travailler.
 
+## 💡 Quelques tips avant de te lancer
+
+- Avance **dans l'ordre** (TODO 1 → 2 → 3) : chaque TODO débloque les
+  erreurs du suivant, sauter l'ordre te fera lire des erreurs qui n'ont
+  rien à voir avec ce que tu es en train de faire.
+- Les erreurs TypeScript sont ton guide, pas ton ennemi : `npm run
+  build` (ou les soulignements rouges de ton éditeur) te dit exactement
+  quel champ manque ou quel type ne colle pas. Lis le message en entier
+  avant de deviner.
+- Installe l'extension **React DevTools** pour inspecter `state` en
+  direct dans l'onglet "Components" pendant que tu cliques sur les
+  boutons - très utile pour vérifier qu'un `case` fait bien ce que tu
+  crois.
+- Un `console.log(action)` tout en haut de `cartReducer` (à retirer
+  ensuite) permet de vérifier que le bon `type` et le bon payload
+  arrivent, avant même d'écrire la logique du `case`.
+- Bloqué plus de **10-15 minutes** sur un TODO ? C'est le signal pour
+  ouvrir l'indice suivant, pas un échec - les indices sont faits pour
+  ça.
+- `solution/` n'est utile qu'**après** avoir vraiment cherché : copier-
+  coller ne t'entraîne pas à transférer le pattern reducer à un nouveau
+  domaine, qui est tout l'objectif du TP.
+{: .alert-info}
+
 ---
 
 # Partie 3 - Les 3 TODOs
 
-**_1 heure_**
+**_45-50 minutes_**
 
 > Sous chaque TODO, des blocs **`▸ Indice`** à dérouler **un par un**,
 > seulement quand tu bloques. Ils ne donnent jamais la ligne de code
@@ -156,6 +188,17 @@ never;` actuel) :
 | `"TOGGLE_HAPPY_HOUR"`    | *(aucun)*                | bouton "Happy Hour"                   |
 | `"RESET_CART"`           | *(aucun)*                | bouton "Vider le panier"              |
 
+⚠️ **Attention à un piège** : dans le cours, l'action `"set"` du
+compteur transporte sa donnée dans un champ générique `payload` (`{
+type: "set"; payload: number }`). Ici, chaque action a son **propre
+champ nommé** (`product`, `productId`, `code` - voir la colonne "Payload
+à transporter" ci-dessus), PAS un champ `payload`. Regarde
+`src/components/ProductCard.tsx` : le `dispatch({ type: "ADD_ITEM",
+product })` déjà câblé te dit exactement quel nom de champ utiliser. Si
+tu tapes `payload` par réflexe, ton union ne collera pas avec les
+composants déjà fournis.
+{: .alert-warning}
+
 <details markdown="1">
 <summary>▸ Indice · la syntaxe d'une union discriminée</summary>
 
@@ -170,7 +213,9 @@ type Action =
 ```
 
 Chaque ligne du tableau ci-dessus devient une variante de l'union, sur le
-même modèle. Une action sans payload n'a que le champ `type`.
+même modèle (juste avec le nom de champ de la colonne "Payload à
+transporter" à la place de `payload`). Une action sans donnée à
+transporter n'a que le champ `type`.
 </details>
 
 **Vérif.** `npm run build` doit faire disparaître les erreurs `is not
@@ -180,40 +225,44 @@ assignable to parameter of type 'never'` dans les fichiers
 
 ## 🔹 TODO 2 · `src/reducer/cartReducer.ts` - écrire le reducer
 
-**_30 minutes_**, le cœur de l'exercice.
+**_15-20 minutes_**, le cœur de l'exercice.
 
-Trois règles à respecter dans chaque `case` :
+Le squelette est là : une fonction `cartReducer(state, action)` avec un
+`switch (action.type)` et un `case` vide (`return state;`) pour chacune
+des 7 actions. Ce TODO n'est **volontairement pas** un exercice d'algo :
+`addLine`/`incrementLine`/`decrementLine`/`removeLine` (dans
+`cartLines.ts`) font déjà tout le travail de `.find()`/`.map()`/
+`.filter()` sur `lines`, et `applyDiscountCode` (dans `cartDiscount.ts`)
+fait déjà la recherche du code promo. Ta seule question, pour chaque
+`case` : **quel nouvel état l'action produit-elle ?**
+
+Trois règles à respecter partout :
 
 1. **Fonction pure** - pas de `fetch`, pas de `Math.random()`, pas de
    mutation d'une variable extérieure au reducer.
 2. **Immutabilité** - jamais `state.lines.push(...)` ni
-   `line.quantity++`. Toujours `{ ...state, ... }`, `.map()`, `.filter()`,
-   `[...state.lines, nouvelleLigne]`.
-3. **Action invalide → état inchangé** - un code promo inconnu ne doit
-   RIEN changer, pas planter.
+   `line.quantity++`. Toujours `{ ...state, ... }`.
+3. **Action invalide → état inchangé** - un code promo qui n'existe pas
+   dans `DISCOUNT_CODES` ne doit RIEN changer, pas planter.
 
 <details markdown="1">
-<summary>▸ Indice · ADD_ITEM et INCREMENT_ITEM</summary>
+<summary>▸ Indice · ADD_ITEM, INCREMENT_ITEM, DECREMENT_ITEM, REMOVE_ITEM</summary>
 
-Les deux se ressemblent : trouve la ligne concernée (`.find()` ou
-`.map()`), et soit incrémente sa `quantity`, soit ajoute une nouvelle
-ligne si le produit n'était pas encore dans le panier.
-</details>
-
-<details markdown="1">
-<summary>▸ Indice · DECREMENT_ITEM</summary>
-
-Fais-le en deux étapes séparées (plus lisible qu'un seul `.reduce()`) :
-`.map()` pour décrémenter la bonne ligne, puis `.filter()` pour retirer
-les lignes tombées à `0`.
+Les quatre suivent exactement le même moule : appelle la fonction de
+`cartLines.ts` qui correspond (`addLine`, `incrementLine`,
+`decrementLine` ou `removeLine`) avec `state.lines` et le bon argument
+(`action.product` ou `action.productId`), et renvoie
+`{ ...state, lines: /* le résultat de l'appel */ }`.
 </details>
 
 <details markdown="1">
 <summary>▸ Indice · APPLY_DISCOUNT_CODE</summary>
 
-`DISCOUNT_CODES` (déjà importé) est un `Record<string, number>`. Cherche
-`action.code` dedans (normalise la casse avec `.toUpperCase()`). Si le
-résultat vaut `undefined`, retourne `state` sans y toucher.
+Même moule que les quatre précédents, avec `applyDiscountCode` (déjà
+importée en haut du fichier) : `applyDiscountCode(state, action.code)`.
+Différence à noter : elle renvoie directement l'état COMPLET (pas
+seulement `lines`), donc pas de `{ ...state, ... }` à écrire ici -
+retourne juste ce qu'elle te donne.
 </details>
 
 <details markdown="1">
