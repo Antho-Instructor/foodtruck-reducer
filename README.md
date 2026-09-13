@@ -125,8 +125,8 @@ Ouvre `http://localhost:5173`. Tu dois voir la liste des produits à gauche
 et un panier vide à droite. **C'est normal que rien ne fonctionne encore.**
 
 Tant que le TODO 3 (Context) n'est pas fait, l'appli affiche une erreur
-React au chargement (`useCart() doit être appelé à l'intérieur d'un
-<CartProvider>`). C'est un message d'erreur **volontaire** : il te dit
+React au chargement (`useCart() doit être appelé à l'intérieur
+d'un <CartProvider>`). C'est un message d'erreur **volontaire** : il te dit
 exactement quoi corriger, ce n'est pas un bug du starter.
 {: .alert-warning}
 
@@ -286,7 +286,7 @@ Structure identique au `ThemeContext` vu en cours, appliquée au panier.
 Dans `CartProvider` :
 
 1. Appelle `useReducer(cartReducer, initialCartState)`.
-2. Retourne `<CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>`
+2. Retourne {% raw %}`<CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>`{% endraw %}
    au lieu du fragment actuel.
 
 Le hook `useCart()` en bas du fichier est **déjà fourni**, tu n'as rien à
