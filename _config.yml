@@ -17,7 +17,7 @@ defaults:
           layout: "default" # possible values: default or tic-tac
 
 style: agorski # possible values: agorski, dev, data, ciber or design.
-title: Workshop useReducer — Le Foodtruck Ynov
+title: Workshop useReducer - Le Foodtruck Ynov
 description: "TP solo : le pattern reducer appliqué à un panier de commande (state complexe, actions métier liées)"
 show_clone: false
 show_toc: true

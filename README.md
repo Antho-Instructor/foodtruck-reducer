@@ -1,13 +1,13 @@
 ---
-title: Workshop useReducer — Le Foodtruck Ynov
+title: Workshop useReducer - Le Foodtruck Ynov
 lang: fr
 ---
 
-# 🚚 Le Foodtruck Ynov — workshop `useReducer`
+# 🚚 Le Foodtruck Ynov - workshop `useReducer`
 
 Ce TP se fait **seul**. Objectif : appliquer `useReducer` à un cas
-**différent** du compteur ou du switch de thème vus en cours — la gestion
-du **panier de commande** d'un foodtruck — pour vérifier que tu sais
+**différent** du compteur ou du switch de thème vus en cours - la gestion
+du **panier de commande** d'un foodtruck - pour vérifier que tu sais
 **transférer** le pattern reducer à un nouveau domaine, pas seulement le
 recopier.
 
