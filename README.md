@@ -41,7 +41,7 @@ React (`useState`, Context API, `useContext`).
 
 Un compteur n'a qu'**une seule valeur** et des actions qui ne se marchent
 jamais sur les pieds (`+1`, `-1`, `reset`). Ça montre la **syntaxe** de
-`useReducer`, mais pas *pourquoi* on en a besoin en vrai projet.
+`useReducer`, mais pas _pourquoi_ on en a besoin en vrai projet.
 
 Le panier du foodtruck a un état **composé de plusieurs valeurs qui
 s'influencent** :
@@ -63,23 +63,23 @@ n'en remettre à zéro qu'une partie.
 
 ```ts
 interface Product {
-  id: string;
-  name: string;
-  price: number;
-  category: "burger" | "side" | "drink";
-  emoji: string;
+	id: string;
+	name: string;
+	price: number;
+	category: "burger" | "side" | "drink";
+	emoji: string;
 }
 
 interface CartLine {
-  product: Product;
-  quantity: number;
+	product: Product;
+	quantity: number;
 }
 
 interface CartState {
-  lines: CartLine[];
-  discountCode: string | null;
-  discountPercent: number;
-  happyHour: boolean;
+	lines: CartLine[];
+	discountCode: string | null;
+	discountPercent: number;
+	happyHour: boolean;
 }
 ```
 
@@ -140,7 +140,7 @@ que tu vas travailler.
   erreurs du suivant, sauter l'ordre te fera lire des erreurs qui n'ont
   rien à voir avec ce que tu es en train de faire.
 - Les erreurs TypeScript sont ton guide, pas ton ennemi : `npm run
-  build` (ou les soulignements rouges de ton éditeur) te dit exactement
+build` (ou les soulignements rouges de ton éditeur) te dit exactement
   quel champ manque ou quel type ne colle pas. Lis le message en entier
   avant de deviner.
 - Installe l'extension **React DevTools** pour inspecter `state` en
@@ -156,7 +156,7 @@ que tu vas travailler.
 - `solution/` n'est utile qu'**après** avoir vraiment cherché : copier-
   coller ne t'entraîne pas à transférer le pattern reducer à un nouveau
   domaine, qui est tout l'objectif du TP.
-{: .alert-info}
+  {: .alert-info}
 
 ---
 
@@ -168,7 +168,7 @@ que tu vas travailler.
 > seulement quand tu bloques. Ils ne donnent jamais la ligne de code
 > directement : ils pointent le bon outil ou la bonne question. Essaie
 > **au moins 10 minutes** avant d'en ouvrir un.
-{: .alert-warning}
+> {: .alert-warning}
 
 ## 🔹 TODO 1 · `src/types.ts` - typer les actions
 
@@ -179,14 +179,14 @@ Le reducer doit gérer **7 actions**. Écris l'union discriminée
 never;` actuel) :
 
 | `type`                  | Payload à transporter | Déclenchée par                       |
-| ------------------------ | ----------------------- | -------------------------------------- |
-| `"ADD_ITEM"`             | `product: Product`      | bouton "Ajouter" d'une carte produit  |
-| `"INCREMENT_ITEM"`       | `productId: string`     | bouton `+` dans le panier             |
-| `"DECREMENT_ITEM"`       | `productId: string`     | bouton `−` dans le panier             |
-| `"REMOVE_ITEM"`          | `productId: string`     | icône poubelle dans le panier         |
-| `"APPLY_DISCOUNT_CODE"`  | `code: string`          | formulaire de code promo              |
-| `"TOGGLE_HAPPY_HOUR"`    | *(aucun)*                | bouton "Happy Hour"                   |
-| `"RESET_CART"`           | *(aucun)*                | bouton "Vider le panier"              |
+| ----------------------- | --------------------- | ------------------------------------ |
+| `"ADD_ITEM"`            | `product: Product`    | bouton "Ajouter" d'une carte produit |
+| `"INCREMENT_ITEM"`      | `productId: string`   | bouton `+` dans le panier            |
+| `"DECREMENT_ITEM"`      | `productId: string`   | bouton `−` dans le panier            |
+| `"REMOVE_ITEM"`         | `productId: string`   | icône poubelle dans le panier        |
+| `"APPLY_DISCOUNT_CODE"` | `code: string`        | formulaire de code promo             |
+| `"TOGGLE_HAPPY_HOUR"`   | _(aucun)_             | bouton "Happy Hour"                  |
+| `"RESET_CART"`          | _(aucun)_             | bouton "Vider le panier"             |
 
 ⚠️ **Attention à un piège** : dans le cours, l'action `"set"` du
 compteur transporte sa donnée dans un champ générique `payload` (`{
@@ -206,16 +206,17 @@ Rappelle-toi l'exemple du compteur vu en cours :
 
 ```ts
 type Action =
-  | { type: "increment" }
-  | { type: "decrement" }
-  | { type: "reset" }
-  | { type: "set"; payload: number };
+	| { type: "increment" }
+	| { type: "decrement" }
+	| { type: "reset" }
+	| { type: "set"; payload: number };
 ```
 
 Chaque ligne du tableau ci-dessus devient une variante de l'union, sur le
 même modèle (juste avec le nom de champ de la colonne "Payload à
 transporter" à la place de `payload`). Une action sans donnée à
 transporter n'a que le champ `type`.
+
 </details>
 
 **Vérif.** `npm run build` doit faire disparaître les erreurs `is not
@@ -253,6 +254,7 @@ Les quatre suivent exactement le même moule : appelle la fonction de
 `decrementLine` ou `removeLine`) avec `state.lines` et le bon argument
 (`action.product` ou `action.productId`), et renvoie
 `{ ...state, lines: /* le résultat de l'appel */ }`.
+
 </details>
 
 <details markdown="1">
@@ -263,6 +265,7 @@ importée en haut du fichier) : `applyDiscountCode(state, action.code)`.
 Différence à noter : elle renvoie directement l'état COMPLET (pas
 seulement `lines`), donc pas de `{ ...state, ... }` à écrire ici -
 retourne juste ce qu'elle te donne.
+
 </details>
 
 <details markdown="1">
@@ -270,6 +273,7 @@ retourne juste ce qu'elle te donne.
 
 Les deux plus courts : `!state.happyHour` pour le premier,
 `initialCartState` (déjà déclaré en haut du fichier) pour le second.
+
 </details>
 
 **Vérif.** Ajoute un burger deux fois de suite → une seule ligne,
@@ -324,7 +328,7 @@ Aucun n'est noté :
   **3ᵉ argument**, une fonction `init(initialArg)` appelée une seule fois
   au premier rendu - utile pour un calcul coûteux (ici : lire un panier
   sauvegardé dans `localStorage`). Essaie `useReducer(cartReducer,
-  undefined, init)` + un `useEffect` qui réécrit le panier dans
+undefined, init)` + un `useEffect` qui réécrit le panier dans
   `localStorage` à chaque changement.
 - **Quantité maximale** : refuse `INCREMENT_ITEM` au-delà de 10 unités
   d'un même produit, sans planter.
@@ -337,17 +341,18 @@ Aucun n'est noté :
 
 # 📋 Auto-évaluation (/20)
 
-Pas de rendu pour ce TP : sers-toi de cette grille pour vérifier que tu as
+**Critères de validation** : sers-toi de cette grille pour vérifier que tu as
 bien tout couvert avant de comparer avec `solution/`.
 
-| Ce qu'on regarde                                                       | Points  |
-| ------------------------------------------------------------------------| :-----: |
-| `npm run dev` démarre, `node_modules` non commité                      |    2    |
-| **TODO 1** - union discriminée complète et correctement typée          |    4    |
-| **TODO 2** - les 7 actions du reducer fonctionnent, state jamais muté  |    8    |
-| **TODO 3** - Context + hook `useCart` fonctionnels                     |    4    |
-| **Scénario de validation** (Partie 4) passe en entier                  |    2    |
-| **Total**                                                               | **/20** |
+| Ce qu'on regarde                                                      | Points  |
+| --------------------------------------------------------------------- | :-----: |
+| `npm run dev` démarre, `node_modules` non commité                     |    2    |
+| **TODO 1** - union discriminée complète et correctement typée         |    4    |
+| **TODO 2** - les 7 actions du reducer fonctionnent, state jamais muté |    8    |
+| **TODO 3** - Context + hook `useCart` fonctionnels                    |    4    |
+| **Scénario de validation** (Partie 4) passe en entier                 |    2    |
+| **Total**                                                             | **/20** |
+
 {: .alert-warning}
 
 ---
@@ -359,7 +364,7 @@ Reformule pour toi-même, sans regarder le code :
 - une situation où plusieurs `useState` seraient devenus incohérents sur
   ce panier ;
 - ce qu'une union discriminée apporte par rapport à `type Action = {
-  type: string; payload?: any }` ;
+type: string; payload?: any }` ;
 - pourquoi le total n'est pas stocké dans `CartState` ;
 - ce que Context apporte à `useReducer`, et inversement.
 
